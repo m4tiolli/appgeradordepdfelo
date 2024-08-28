@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "Gerador de Proposta",
+    "slug": "Gerador de Proposta ",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
