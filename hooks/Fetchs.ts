@@ -1,13 +1,17 @@
 import axios from "axios"
 import { getToken } from "./TokenValid"
 
-const fetchUserById = async ({ setUser }: any) => {
+export const fetchUserById = async ({ setUser }: any) => {
   const token = await getToken()
-  axios.get("api/perfil", { headers: { authorization: token } })
+  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/perfil", { headers: { Authorization: token } })
     .then((response) => {
       setUser(response.data)
     })
     .catch((error) => {
-      console.error(error.response)
+      console.error("Erro ao buscar perfil:", error)
     })
+}
+
+export const fetchCodigoProposta = async () => {
+  
 }

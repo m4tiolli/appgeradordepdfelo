@@ -1,15 +1,32 @@
 import { buttons } from "@/constants/Buttons";
-import { isTokenValid } from "@/hooks/TokenValid";
+import { fetchUserById } from "@/hooks/Fetchs";
+import { getToken, isTokenValid } from "@/hooks/TokenValid";
+import { IUsuario } from "@/interfaces/Usuario";
+import JWT from "expo-jwt";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function Index() {
+  const [usuario, setUsuario] = useState<IUsuario>();
+  const [expire, setExpire] = useState({ data: "", hora: "" });
   useEffect(() => {
     async function checkToken() {
-      if (!(await isTokenValid())) {
+      try {
+        if ((await isTokenValid()) !== true) {
+          console.log("Token expired");
+          Toast.show({
+            type: "error",
+            text1: "Sessão expirada.",
+            text2: "Sua sessão expirou. Por favor, realize o login novamente.",
+          });
+          setTimeout(() => {
+            router.push("/login");
+          }, 5000);
+        }
+      } catch (error) {
         Toast.show({
           type: "error",
           text1: "Sessão expirada.",
@@ -20,11 +37,34 @@ export default function Index() {
         }, 5000);
       }
     }
+
+    const getExpirationDate = async () => {
+      const token = await getToken();
+
+      if (!token) {
+        await checkToken();
+        return;
+      }
+
+      const decoded = JWT.decode(token, "secret_key");
+      if (decoded.exp) {
+        const expirationDate = new Date(decoded.exp * 1000);
+        const data = expirationDate.toLocaleDateString("pt-BR");
+        const hora = expirationDate.toLocaleTimeString("pt-BR");
+        setExpire({ data: data, hora: hora });
+      } else {
+        console.log("Token does not contain an expiration date");
+      }
+    };
     checkToken();
-  });
+    fetchUserById({ setUser: setUsuario });
+    getExpirationDate();
+  }, []);
 
   return (
     <SafeAreaView className="w-full h-full flex-1 items-center justify-center">
+      <Text className="text-2xl text-[#38457a] font-semibold absolute top-14">Conectado como: {usuario?.nome}</Text>
+      
       <Text className="text-3xl text-[#38457a] font-semibold">
         Gerador de proposta
       </Text>
@@ -39,6 +79,9 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
       ))}
+      <Text className="mt-4 text-lg font-regular">
+        Seu acesso expira em {expire.data} às {expire.hora}
+      </Text>
       <Toast />
     </SafeAreaView>
   );

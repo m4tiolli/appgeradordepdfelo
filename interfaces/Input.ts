@@ -1,4 +1,5 @@
 export interface InputProps {
+  index: number
   name: string
   placeholder: string;
   value: string;
@@ -6,6 +7,7 @@ export interface InputProps {
   onChange: ({ name, text, setValues }: { name: string, text: string, setValues: React.Dispatch<React.SetStateAction<any>> }) => void,
   password?: boolean
   setValues: React.Dispatch<React.SetStateAction<any>>
+  refs: React.RefObject<any>[];
 }
 
 export interface LoginInputsProps {

@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
 export const buttons = [
@@ -23,6 +24,6 @@ export const buttons = [
   },
   {
     title: "Sair",
-    onPress: () => router.push("/login"),
+    onPress: async () => await AsyncStorage.removeItem("token").then(() => router.push("/login")),
   }
 ]

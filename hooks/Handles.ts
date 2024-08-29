@@ -14,7 +14,7 @@ export const handleLogin = async (
 ) => {
   setLoading(true);
   axios
-    .post(process.env.EXPO_PUBLIC_URL_API + "/api/login", {
+    .post(process.env.EXPO_PUBLIC_URL_API + "api/login", {
       email: values.email,
       senha: values.password,
     })

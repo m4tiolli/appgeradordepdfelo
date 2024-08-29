@@ -8,17 +8,15 @@ export const getToken = async () => {
 
 export const isTokenValid = async () => {
   const token = await getToken()
-  console.log(token);
+  console.log(token)
   if (!token || token == null || token == undefined) return false
   const key = 'secret_key'
   const decoded = JWT.decode(token, key)
   const jwtDate = decoded.exp
   if (!jwtDate) return false
   if (Date.now() >= jwtDate * 1000) {
-    console.log("expirado")
     return false
   } else {
-    console.log("ok")
     return true
   }
 }

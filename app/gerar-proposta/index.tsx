@@ -46,6 +46,7 @@ export default function Index() {
         completedCheckColor="#fff"
         completedStepIconColor="#38457a"
         completedProgressBarColor="#38457a"
+        disabledStepNumColor="#38457a"
       >
         <ProgressStep
           label="Dados da proposta"
@@ -56,11 +57,6 @@ export default function Index() {
             borderRadius: 5,
           }}
           nextBtnTextStyle={{ color: "#ffffff" }}
-          previousBtnStyle={{
-            backgroundColor: "#38457a",
-            borderRadius: 5,
-          }}
-          previousBtnTextStyle={{ color: "#ffffff" }}
         >
           <View>
             {InputsPropostas({ values, onChange, setValues })
