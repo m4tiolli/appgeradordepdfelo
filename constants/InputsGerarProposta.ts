@@ -131,7 +131,7 @@ export const InputsPropostas= ({values, setValues, onChange}: CopyInputWithInfoP
     name: "valor",
     value: values.valor.toString(),
     onChange: onChange,
-    placeholder: "Valor",
+    placeholder: "Valor em R$",
     type: "text",
     setValues: setValues,
     values: values

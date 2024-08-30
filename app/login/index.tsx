@@ -22,9 +22,10 @@ export default function Index() {
         </Text>
         {LoginInputs({ values, onChange, setValues }).map((props, index) => (
           <Input
-            index={index+1}
+            index={index}
             refs={refs}
             key={index++}
+            handleLogin={() => handleLogin(setLoading, values, Toast)}
             {...props}
           />
         ))}

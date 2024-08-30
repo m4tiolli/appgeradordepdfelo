@@ -1,3 +1,4 @@
+import { handleLogin } from '@/hooks/Handles';
 export interface InputProps {
   index: number
   name: string
@@ -8,6 +9,7 @@ export interface InputProps {
   password?: boolean
   setValues: React.Dispatch<React.SetStateAction<any>>
   refs: React.RefObject<any>[];
+  handleLogin: () => void
 }
 
 export interface LoginInputsProps {
