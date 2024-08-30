@@ -17,6 +17,18 @@ export default function Input(props: InputWithInfoProps) {
         cursorColor={"#38457a"}
         secureTextEntry={props.password}
         className="w-full border border-[#38457a4d] bg-[#38457af8] text-white text-xl p-2 rounded-md mt-4"
+        onSubmitEditing={() => {
+            props.refs[props.index + 1].current.focus();
+        }}
+        autoFocus={props.index === 0}
+        showSoftInputOnFocus
+        returnKeyType={
+          props.refs[props.index] >= props.refs[props.refs.length]
+            ? "done"
+            : "next"
+        }
+        blurOnSubmit={props.refs[props.index] >= props.refs[props.refs.length]}
+        ref={props.refs[props.index]}
       />
     </View>
   );

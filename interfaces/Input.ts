@@ -30,6 +30,9 @@ export interface InputWithInfoProps {
   placeholder: string;
   password?: boolean;
   type: string;
+  refs: React.RefObject<any>[];
+  index: number
+  handleLogin: () => void
 }
 export interface CopyInputWithInfoProps {
   values: Values;

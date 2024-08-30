@@ -5,11 +5,12 @@ import { IUsuario } from "@/interfaces/Usuario";
 import JWT from "expo-jwt";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function Index() {
+  const [isMounted, setIsMounted] = useState(false);
   const [usuario, setUsuario] = useState<IUsuario>();
   const [expire, setExpire] = useState({ data: "", hora: "" });
   useEffect(() => {
@@ -52,7 +53,11 @@ export default function Index() {
         const data = expirationDate.toLocaleDateString("pt-BR");
         const hora = expirationDate.toLocaleTimeString("pt-BR");
         setExpire({ data: data, hora: hora });
+        setTimeout(() => {
+          setIsMounted(true);
+        }, 2000)
       } else {
+        setIsMounted(true);
         console.log("Token does not contain an expiration date");
       }
     };
@@ -63,25 +68,34 @@ export default function Index() {
 
   return (
     <SafeAreaView className="w-full h-full flex-1 items-center justify-center">
-      <Text className="text-2xl text-[#38457a] font-semibold absolute top-14">Conectado como: {usuario?.nome}</Text>
-      
-      <Text className="text-3xl text-[#38457a] font-semibold">
-        Gerador de proposta
-      </Text>
-      {buttons.map((button, index) => (
-        <TouchableOpacity
-          className="bg-[#38457a] rounded-md w-[70%] p-4 mt-4 flex items-center justify-center"
-          onPress={button.onPress}
-          key={index++}
-        >
-          <Text className="text-white text-2xl font-semibold">
-            {button.title}
+      {!isMounted ? (
+        <ActivityIndicator size={"large"} color={"#38457a"} />
+      ) : (
+        <>
+          <Text className="text-2xl text-[#38457a] font-semibold absolute top-14">
+            Conectado como: {usuario?.nome}
           </Text>
-        </TouchableOpacity>
-      ))}
-      <Text className="mt-4 text-lg font-regular">
-        Seu acesso expira em {expire.data} às {expire.hora}
-      </Text>
+
+          <Text className="text-3xl text-[#38457a] font-semibold">
+            Gerador de proposta
+          </Text>
+          {buttons.map((button, index) => (
+            <TouchableOpacity
+              className="bg-[#38457a] rounded-md w-[70%] p-4 mt-4 flex items-center justify-center"
+              onPress={button.onPress}
+              key={index++}
+            >
+              <Text className="text-white text-2xl font-semibold">
+                {button.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+          <Text className="mt-4 text-lg font-regular">
+            Seu acesso expira em {expire.data} às {expire.hora}
+          </Text>
+        </>
+      )}
+
       <Toast />
     </SafeAreaView>
   );
