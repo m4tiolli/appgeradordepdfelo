@@ -2,21 +2,23 @@ import Input from "@/components/InputWithInfo";
 import { InputsPropostas } from "@/constants/InputsGerarProposta";
 import { onChange } from "@/hooks/Handles";
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, Text, TextInput, View, StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import axios from "axios";
 import DatePickerField from "@/components/DatePicker";
+import { Select } from "@/components/Select";
 
 export default function Index() {
   const [values, setValues] = useState({
     proposta: "",
-    data: "",
-    cnpj: "",
+    data: new Date(),
+    cnpj: 0,
+    fatorFinanceiroMes: 0,
     nomeEmpresa: "",
     razao: "",
-    potencia: "",
-    valorContaEnergia: "",
+    potencia: 0,
+    valorContaEnergia: 0,
     vendedor: "",
     departamentoVendedor: "",
     telefoneVendedor: "",
@@ -27,6 +29,29 @@ export default function Index() {
     emailTomador: "",
     valor: 0,
   });
+
+  const [fatores, setFatores] = useState<any>([]);
+  const [options, setOptions] = useState<any>([]);
+
+  useEffect(() => {
+    const buscarFatores = async () => {
+      try {
+        const response = await axios.get(
+          process.env.EXPO_PUBLIC_URL_API + "api/fatores-financeiros"
+        );
+        setFatores(response.data);
+        setOptions(
+          response.data.map((fator: any) => ({
+            label: fator.meses + " meses",
+            value: fator.meses,
+          }))
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    buscarFatores();
+  }, []);
 
   useEffect(() => {
     axios
@@ -54,9 +79,7 @@ export default function Index() {
     useRef(null),
     useRef(null),
     useRef(null),
-  ]
-
-
+  ];
 
   return (
     <SafeAreaView className="w-full h-full flex-1 items-center justify-center">
@@ -85,15 +108,31 @@ export default function Index() {
               borderRadius: 5,
             }}
             nextBtnTextStyle={{ color: "#ffffff" }}
-            nextBtnDisabled={Object.values(values).slice(0,5).some((value) => value === "")}
+            nextBtnDisabled={Object.values(values)
+              .slice(0, 4)
+              .some((value) => value === "")}
           >
             <View>
-              <DatePickerField />
               {InputsPropostas({ values, onChange, setValues })
-                .slice(0, 5)
+                .slice(0, 1)
                 .map((props, index) => (
-                  <Input key={index++} {...props} index={index}
-                  refs={refs} />
+                  <Input key={index++} {...props} index={index} refs={refs} />
+                ))}
+              <View className="relative mt-4">
+                <Text className="absolute font-semibold text-[#38457a]">
+                  Duração de contrato
+                </Text>
+                <Select
+                  setValues={setValues}
+                  name="fatorFinanceiroMes"
+                  fatores={options}
+                />
+              </View>
+              <DatePickerField setValues={setValues} values={values} />
+              {InputsPropostas({ values, onChange, setValues })
+                .slice(1, 4)
+                .map((props, index) => (
+                  <Input key={index++} {...props} index={index} refs={refs} />
                 ))}
             </View>
           </ProgressStep>
@@ -113,17 +152,24 @@ export default function Index() {
             previousBtnTextStyle={{ color: "#ffffff" }}
           >
             <View>
-              {InputsPropostas({ values, onChange, setValues })
-                .slice(5, 7)
+              {InputsPropostas({
+                values,
+                onChange,
+                setValues,
+                mesesFatorFinanceiro: fatores,
+              })
+                .slice(4, 6)
                 .map((props, index) => (
-                  <Input key={index++} {...props} index={index}
-                  refs={refs} />
+                  <Input key={index++} {...props} index={index} refs={refs} />
                 ))}
-              {InputsPropostas({ values, onChange, setValues })
-                .slice(14, 15)
+              {InputsPropostas({
+                values,
+                onChange,
+                setValues,
+              })
+                .slice(13, 14)
                 .map((props, index) => (
-                  <Input key={index++} {...props} index={index}
-                  refs={refs} />
+                  <Input key={index++} {...props} index={index} refs={refs} />
                 ))}
             </View>
           </ProgressStep>
@@ -144,10 +190,9 @@ export default function Index() {
           >
             <View>
               {InputsPropostas({ values, onChange, setValues })
-                .slice(7, 11)
+                .slice(6, 10)
                 .map((props, index) => (
-                  <Input key={index++} {...props} index={index}
-                  refs={refs} />
+                  <Input key={index++} {...props} index={index} refs={refs} />
                 ))}
             </View>
           </ProgressStep>
@@ -169,10 +214,9 @@ export default function Index() {
           >
             <View>
               {InputsPropostas({ values, onChange, setValues })
-                .slice(11, 14)
+                .slice(10, 13)
                 .map((props, index) => (
-                  <Input key={index++} {...props} index={index}
-                  refs={refs} />
+                  <Input key={index++} {...props} index={index} refs={refs} />
                 ))}
             </View>
           </ProgressStep>

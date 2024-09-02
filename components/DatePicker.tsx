@@ -1,48 +1,60 @@
 import React, { useState } from "react";
-import {Text, Button } from "react-native";
+import { Text, TextInput, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 
-const DatePickerField = () => {
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [mode, setMode] = useState('date');
+const DatePickerField = ({
+  setValues,
+  values,
+}: {
+  setValues: any;
+  values: any;
+}) => {
+  const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
 
-  const onChange = (event, selectedDate) => {
+  const onChange = (
+    event: DateTimePickerEvent,
+    selectedDate: Date | undefined
+  ) => {
     const currentDate = selectedDate;
     setShow(false);
-    setDate(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
+    setDate(currentDate as Date);
+    setValues((prev: any) => ({
+      ...prev,
+      data: date,
+    }));
   };
 
   return (
     <SafeAreaView>
-      <Button onPress={showDatepicker} title="Show date picker!" />
-      <Button onPress={showTimepicker} title="Show time picker!" />
-      <Text>selected: {date.toLocaleString()}</Text>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          onChange={onChange}
-        />
-      )}
+      <View className="relative -mt-4">
+        <Text className="absolute font-semibold text-[#38457a]">
+          Data da proposta
+        </Text>
+        <TouchableOpacity onPress={() => setShow(true)}>
+          <TextInput
+            editable={false}
+            value={
+              date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear()
+            }
+            className="w-full border border-[#38457a4d] bg-[#38457af8] text-white text-xl p-2 rounded-md mt-4"
+          />
+        </TouchableOpacity>
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={values.data}
+            mode="date"
+            is24Hour={true}
+            onChange={onChange}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
 
-export default DatePickerField
+export default DatePickerField;

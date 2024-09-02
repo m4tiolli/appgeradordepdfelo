@@ -1,4 +1,3 @@
-import { handleLogin } from '@/hooks/Handles';
 export interface InputProps {
   index: number
   name: string
@@ -30,24 +29,28 @@ export interface InputWithInfoProps {
   placeholder: string;
   password?: boolean;
   type: string;
-  refs: React.RefObject<any>[];
-  index: number
-  handleLogin: () => void
+  refs?: React.RefObject<any>[];
+  index?: number
+  handleLogin?: () => void
+  keyboardType?: string
+  onEnd?: () => void
 }
 export interface CopyInputWithInfoProps {
   values: Values;
   setValues: React.Dispatch<React.SetStateAction<any>>;
   onChange: ({ name, text, setValues }: { name: string, text: string, setValues: React.Dispatch<React.SetStateAction<any>> }) => void
+  mesesFatorFinanceiro?: []
 }
 
 export interface Values {
   proposta: string,
-  data: string,
-  cnpj: string,
+  data: string | Date,
+  cnpj: string | number,
   nomeEmpresa: string,
   razao: string,
-  potencia: string,
-  valorContaEnergia: string,
+  fatorFinanceiroMes: number
+  potencia: string | number,
+  valorContaEnergia: string | number,
   vendedor: string,
   departamentoVendedor: string,
   telefoneVendedor: string,

@@ -13,5 +13,11 @@ export const fetchUserById = async ({ setUser }: any) => {
 }
 
 export const fetchCodigoProposta = async () => {
-  
+
+}
+
+export const fetchFatoresFinanceiros = async ({ setFatores }: any) => {
+  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/fatores-financeiros")
+    .then((response) => setFatores(response.data))
+    .catch(err => console.error(err))
 }

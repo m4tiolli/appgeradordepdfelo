@@ -1,6 +1,7 @@
 import { CopyInputWithInfoProps, InputWithInfoProps } from "@/interfaces/Input";
+import { calcularValorTotal } from "./Calculo";
 
-export const InputsPropostas= ({values, setValues, onChange}: CopyInputWithInfoProps): InputWithInfoProps[]  => [
+export const InputsPropostas= ({values, setValues, onChange, mesesFatorFinanceiro}: CopyInputWithInfoProps): InputWithInfoProps[]  => [
   {
     name: "proposta",
     value: values.proposta,
@@ -11,22 +12,14 @@ export const InputsPropostas= ({values, setValues, onChange}: CopyInputWithInfoP
     values: values
   }, 
   {
-    name: "data",
-    value: values.data,
-    onChange: onChange,
-    placeholder: "Data da Proposta",
-    type: "date",
-    setValues: setValues,
-    values: values
-  },
-  {
     name: "cnpj",
-    value: values.cnpj,
+    value: values.cnpj as string,
     onChange: onChange,
     placeholder: "CNPJ da Empresa",
-    type: "text",
+    type: "numeric",
     setValues: setValues,
-    values: values
+    values: values,
+    keyboardType: "numeric"
   },
   {
     name: "nomeEmpresa",
@@ -48,21 +41,28 @@ export const InputsPropostas= ({values, setValues, onChange}: CopyInputWithInfoP
   },
   {
     name: "potencia",
-    value: values.potencia,
+    value: values.potencia as string,
     onChange: onChange,
     placeholder: "Potência do Equipamento em KVA",
-    type: "text",
+    type: "numeric",
     setValues: setValues,
-    values: values
+    values: values,
+    keyboardType: "numeric"
   },
   {
     name: "valorContaEnergia",
-    value: values.valorContaEnergia,
+    value: values.valorContaEnergia as string,
     onChange: onChange,
     placeholder: "Valor da conta de Energia em R$",
-    type: "text",
+    type: "numeric",
     setValues: setValues,
-    values: values
+    values: values,
+    keyboardType: "numeric",
+    onEnd: () => calcularValorTotal({
+      formData: values,
+      setFormData: setValues,
+      mesesFatorFinanceiro
+    })
   },
   {
     name: "vendedor",
@@ -132,8 +132,9 @@ export const InputsPropostas= ({values, setValues, onChange}: CopyInputWithInfoP
     value: values.valor.toString(),
     onChange: onChange,
     placeholder: "Valor em R$",
-    type: "text",
+    type: "numeric",
     setValues: setValues,
-    values: values
+    values: values,
+    keyboardType: "numeric"
   }
 ]
