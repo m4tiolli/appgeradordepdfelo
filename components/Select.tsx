@@ -1,5 +1,5 @@
 import RNPickerSelect from "react-native-picker-select";
-export const Select = ({ setValues, name, fatores }: any) => {
+export const Select = ({ setValues, name, fatores, placeholder }: any) => {
   return (
     <RNPickerSelect
       style={{
@@ -17,7 +17,7 @@ export const Select = ({ setValues, name, fatores }: any) => {
         },
       }}
       placeholder={{
-        label: "Duração de contrato",
+        label: placeholder,
         value: "",
       }}
       onValueChange={(value) =>

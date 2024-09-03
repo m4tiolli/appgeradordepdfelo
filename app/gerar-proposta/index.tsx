@@ -2,15 +2,17 @@ import Input from "@/components/InputWithInfo";
 import { InputsPropostas } from "@/constants/InputsGerarProposta";
 import { onChange } from "@/hooks/Handles";
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { Alert, Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import axios from "axios";
 import DatePickerField from "@/components/DatePicker";
 import { Select } from "@/components/Select";
+import { getToken } from "@/hooks/TokenValid";
+import { Values } from "@/interfaces/Input";
 
 export default function Index() {
-  const [values, setValues] = useState({
+  const [values, setValues] = useState<Values>({
     proposta: "",
     data: new Date(),
     cnpj: 0,
@@ -29,29 +31,66 @@ export default function Index() {
     emailTomador: "",
     valor: 0,
   });
-
+  const [modalVisible, setModalVisible] = useState(false);
   const [fatores, setFatores] = useState<any>([]);
   const [options, setOptions] = useState<any>([]);
 
-  useEffect(() => {
-    const buscarFatores = async () => {
-      try {
-        const response = await axios.get(
-          process.env.EXPO_PUBLIC_URL_API + "api/fatores-financeiros"
-        );
-        setFatores(response.data);
-        setOptions(
-          response.data.map((fator: any) => ({
-            label: fator.meses + " meses",
-            value: fator.meses,
-          }))
-        );
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    buscarFatores();
-  }, []);
+  const [departamentos, setDepartamentos] = useState<any>([]);
+
+  const token = getToken();
+
+  const buscarDadosUsuario = async () => {
+    try {
+      const response = await axios.get(
+        process.env.EXPO_PUBLIC_URL_API + "api/perfil",
+        {
+          headers: { Authorization: await token },
+        }
+      );
+      setValues((prev) => ({
+        ...prev,
+        vendedor: response.data?.nome,
+        emailVendedor: response.data?.email,
+        telefoneVendedor: response.data?.telefone1,
+        departamentoVendedor: response.data?.departamento,
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const buscarDepartamentos = async () => {
+    try {
+      const response = await axios.get(
+        process.env.EXPO_PUBLIC_URL_API + "api/departamentos"
+      );
+      setDepartamentos(
+        response.data.map((departamento: any) => ({
+          label: departamento.nome,
+          value: departamento.nome,
+        }))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const buscarFatores = async () => {
+    try {
+      const response = await axios.get(
+        process.env.EXPO_PUBLIC_URL_API + "api/fatores-financeiros"
+      );
+      setFatores(response.data);
+      setOptions(
+        response.data.map((fator: any) => ({
+          label: fator.meses + " meses",
+          value: fator.meses,
+        }))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     axios
@@ -59,6 +98,9 @@ export default function Index() {
       .then((response) =>
         setValues((prev) => ({ ...prev, proposta: response.data.proposta }))
       );
+    buscarDadosUsuario();
+    buscarDepartamentos();
+    buscarFatores();
   }, []);
 
   const refs = [
@@ -80,6 +122,12 @@ export default function Index() {
     useRef(null),
     useRef(null),
   ];
+
+  const GerarPDF = () => {
+    const dataString = (values.data as Date).toISOString().substring(0, 10);
+    setValues((prev) => ({...prev, data: dataString}))
+    console.log(values)
+  }
 
   return (
     <SafeAreaView className="w-full h-full flex-1 items-center justify-center">
@@ -126,6 +174,7 @@ export default function Index() {
                   setValues={setValues}
                   name="fatorFinanceiroMes"
                   fatores={options}
+                  placeholder={"Duração do contrato"}
                 />
               </View>
               <DatePickerField setValues={setValues} values={values} />
@@ -197,6 +246,7 @@ export default function Index() {
             </View>
           </ProgressStep>
           <ProgressStep
+            onSubmit={GerarPDF}
             label="Dados do tomador"
             nextBtnText="Avançar"
             previousBtnText="Voltar"
@@ -218,10 +268,49 @@ export default function Index() {
                 .map((props, index) => (
                   <Input key={index++} {...props} index={index} refs={refs} />
                 ))}
+
+              <View className="relative mt-4">
+                <Text className="absolute font-semibold text-[#38457a]">
+                  Departamento do tomador
+                </Text>
+                <Select
+                  setValues={setValues}
+                  name="departamentoTomador"
+                  fatores={departamentos}
+                  placeholder={"Departamento do tomador"}
+                />
+              </View>
             </View>
           </ProgressStep>
         </ProgressSteps>
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View className="flex-1 items-center justify-center bg-[#00000094]">
+          <View className="bg-white p-4 rounded-md gap-y-4">
+            <Text className="text-3xl font-semibold text-[#38457a] text-center">
+              Proposta gerada!
+            </Text>
+            <View className="flex items-center justify-center gap-x-4 flex-row">
+              <TouchableOpacity className="border-2 border-[#38457a] w-[40%] p-4 rounded-md flex items-center justify-center">
+                <Text className="text-[#38457a] text-lg font-semibold">
+                  Visualizar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="bg-[#38457a]  w-[40%] p-4 rounded-md flex items-center justify-center">
+                <Text className="text-white text-lg font-semibold">Baixar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

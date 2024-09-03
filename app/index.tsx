@@ -55,7 +55,7 @@ export default function Index() {
         setExpire({ data: data, hora: hora });
         setTimeout(() => {
           setIsMounted(true);
-        }, 2000)
+        }, 2000);
       } else {
         setIsMounted(true);
         console.log("Token does not contain an expiration date");

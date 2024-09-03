@@ -17,14 +17,6 @@ export const calcularValorTotal = ({
   const fator = mesesFatorFinanceiro?.find(
     (mes) => mes.meses === parseInt(formData.fatorFinanceiroMes as string)
   )?.porcentagem;
-  console.log(fator)
-  console.log(mesesFatorFinanceiro)
-  console.log(formData.fatorFinanceiroMes)
-  console.log(
-    "Potência * Fator: " + potencia * (fator as number),
-    "5% Conta de energia: " + (contaEnergia / 100) * 5,
-    "10% Conta de energia: " + (contaEnergia / 100) * 10,
-  );
   if (potencia * (fator as number) < (contaEnergia / 100) * 5) {
     setFormData((prev) => ({
       ...prev,

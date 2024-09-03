@@ -42,6 +42,7 @@ export default function Input(props: Readonly<InputWithInfoProps>) {
           ref={props.refs[props.index]}
           keyboardType={props.keyboardType as KeyboardTypeOptions ?? "default"}
           onBlur={() => props.onEnd && props.onEnd()}
+          editable={props.name !== "valor"}
         />
       </View>
     );
