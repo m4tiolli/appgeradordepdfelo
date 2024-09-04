@@ -17,3 +17,9 @@ export const fetchFatoresFinanceiros = async ({ setFatores }: any) => {
     .then((response) => setFatores(response.data))
     .catch(err => console.error(err))
 }
+
+export const fetchPropostas = async ({ setPropostas }: any) => {
+  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/buscar-proposta")
+    .then((response) => setPropostas(response.data))
+    .catch(err => console.error(err))
+}

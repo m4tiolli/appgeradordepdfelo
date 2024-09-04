@@ -241,7 +241,7 @@ export default function Index() {
       ) : (
         ""
       )}
-      <View className="w-[90%] flex-1 items-center">
+      <View className="w-full flex-1 items-center">
         <Text className="text-3xl text-[#38457a] font-semibold">
           Gerar nova proposta
         </Text>
