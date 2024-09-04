@@ -13,9 +13,9 @@ export const InputsPropostas= ({values, setValues, onChange, mesesFatorFinanceir
   }, 
   {
     name: "cnpj",
-    value: values.cnpj as string,
+    value: values.cnpjMask as string,
     onChange: onChange,
-    placeholder: "CNPJ da Empresa sem pontos e traços",
+    placeholder: "CNPJ da Empresa",
     type: "numeric",
     setValues: setValues,
     values: values,
@@ -51,7 +51,7 @@ export const InputsPropostas= ({values, setValues, onChange, mesesFatorFinanceir
   },
   {
     name: "valorContaEnergia",
-    value: values.valorContaEnergia as string,
+    value: values.valorContaEnergiaMask as string,
     onChange: onChange,
     placeholder: "Valor da conta de Energia em R$",
     type: "numeric",
@@ -129,7 +129,7 @@ export const InputsPropostas= ({values, setValues, onChange, mesesFatorFinanceir
   },
   {
     name: "valor",
-    value: values.valor.toString(),
+    value: values.valorMask,
     onChange: onChange,
     placeholder: "Valor total da proposta em R$",
     type: "numeric",

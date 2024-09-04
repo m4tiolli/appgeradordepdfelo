@@ -38,7 +38,7 @@ const DatePickerField = ({
           <TextInput
             editable={false}
             value={
-              date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear()
+              date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
             }
             className="w-full border border-[#38457a4d] bg-[#38457af8] text-white text-xl p-2 rounded-md mt-4"
           />

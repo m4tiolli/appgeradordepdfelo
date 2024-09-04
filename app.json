@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.elogeradordepdf"
+      "package": "com.elogeradordepdf",
     },
     "web": {
       "bundler": "metro",

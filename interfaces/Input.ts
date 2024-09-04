@@ -46,18 +46,22 @@ export interface Values {
   proposta: string,
   data: string | Date,
   cnpj: string | number,
+  cnpjMask: string | number
   nomeEmpresa: string,
   razao: string,
   fatorFinanceiroMes: number
   potencia: string | number,
   valorContaEnergia: string | number,
+  valorContaEnergiaMask: string,
   vendedor: string,
   departamentoVendedor: string,
   telefoneVendedor: string,
+  telefone2Vendedor: string
   emailVendedor: string,
   tomador: string,
   departamentoTomador: string,
   telefoneTomador: string,
   emailTomador: string,
-  valor: number
+  valor: number,
+  valorMask: string
 }

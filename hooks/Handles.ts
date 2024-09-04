@@ -4,7 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
 export const onChange = ({ name, text, setValues }: OnChange) => {
-  setValues((prevState: any) => ({ ...prevState, [name]: text }));
+  const tipoText = name === "potencia" || name === "valorContaEnergia" ? parseInt(text) : text
+  setValues((prevState: any) => ({ ...prevState, [name]: tipoText }));
 };
 
 export const handleLogin = async (

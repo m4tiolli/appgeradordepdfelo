@@ -2,7 +2,15 @@ import Input from "@/components/InputWithInfo";
 import { InputsPropostas } from "@/constants/InputsGerarProposta";
 import { onChange } from "@/hooks/Handles";
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Modal, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Linking,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import axios from "axios";
@@ -10,32 +18,38 @@ import DatePickerField from "@/components/DatePicker";
 import { Select } from "@/components/Select";
 import { getToken } from "@/hooks/TokenValid";
 import { Values } from "@/interfaces/Input";
+import { router } from "expo-router";
 
 export default function Index() {
   const [values, setValues] = useState<Values>({
     proposta: "",
     data: new Date(),
-    cnpj: 0,
+    cnpj: "",
+    cnpjMask: "",
     fatorFinanceiroMes: 0,
     nomeEmpresa: "",
     razao: "",
     potencia: 0,
     valorContaEnergia: 0,
+    valorContaEnergiaMask: "",
     vendedor: "",
     departamentoVendedor: "",
     telefoneVendedor: "",
+    telefone2Vendedor: "",
     emailVendedor: "",
     tomador: "",
     departamentoTomador: "",
     telefoneTomador: "",
     emailTomador: "",
     valor: 0,
+    valorMask: "",
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [fatores, setFatores] = useState<any>([]);
   const [options, setOptions] = useState<any>([]);
-
+  const [linkPdf, setLinkPdf] = useState("");
   const [departamentos, setDepartamentos] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const token = getToken();
 
@@ -52,6 +66,7 @@ export default function Index() {
         vendedor: response.data?.nome,
         emailVendedor: response.data?.email,
         telefoneVendedor: response.data?.telefone1,
+        telefone2Vendedor: response.data?.telefone2,
         departamentoVendedor: response.data?.departamento,
       }));
     } catch (err) {
@@ -123,14 +138,109 @@ export default function Index() {
     useRef(null),
   ];
 
-  const GerarPDF = () => {
-    const dataString = (values.data as Date).toISOString().substring(0, 10);
-    setValues((prev) => ({...prev, data: dataString}))
-    console.log(values)
-  }
+  const GerarPDF = async () => {
+    setIsLoading(true);
+    const idFator = fatores.find(
+      (fator: any) => fator.meses === values.fatorFinanceiroMes
+    );
+    const dataString = (values.data as Date).toISOString();
+    const sliced = dataString.slice(0, 10);
+    function formatarData(data: string): string {
+      const meses = [
+        "janeiro",
+        "fevereiro",
+        "março",
+        "abril",
+        "maio",
+        "junho",
+        "julho",
+        "agosto",
+        "setembro",
+        "outubro",
+        "novembro",
+        "dezembro",
+      ];
+      if (data.length === 10) {
+        const [ano, mes, dia] = data.split("-");
+        const mesNome = meses[parseInt(mes, 10) - 1];
+        return `${dia} de ${mesNome} de ${ano}`;
+      } else {
+        return "";
+      }
+    }
+
+    const dataToSend = {
+      vendedor: values.vendedor,
+      telefone1vendedor: values.telefoneVendedor,
+      telefone2vendedor: values.telefone2Vendedor,
+      emailvendedor: values.emailVendedor,
+      departamentovendedor: values.departamentoVendedor,
+      tomador: values.tomador,
+      departamento: values.departamentoTomador,
+      email: values.emailTomador,
+      telefone: values.telefoneTomador,
+      data: sliced,
+      dataFull: formatarData(sliced),
+      proposta: values.proposta,
+      nomeEmpresa: values.nomeEmpresa,
+      razao: values.razao,
+      cnpj: values.cnpj,
+      potencia: values.potencia,
+      valor: values.valor,
+      meses: values.fatorFinanceiroMes,
+      valorContaEnergia: values.valorContaEnergia,
+      fatorFinanceiroId: idFator.id,
+    };
+
+    await axios
+      .post(process.env.EXPO_PUBLIC_URL_API + "api/gerar-pdf", dataToSend, {
+        headers: { Authorization: await token },
+      })
+      .then((response) => setLinkPdf(response.data.downloadLink))
+      .then(() => setIsLoading(false))
+      .then(() => setModalVisible(true))
+      .catch((err) => {
+        console.error(err);
+        setIsLoading(false);
+      });
+  };
+
+  const Passo1Desativado =
+    values.fatorFinanceiroMes === 0 ||
+    values.proposta === "" ||
+    values.data === "" ||
+    values.cnpj === "" ||
+    values.razao === "" ||
+    values.nomeEmpresa === "";
+
+  const Passo2Desativado =
+    values.potencia === "" ||
+    values.valorContaEnergia === "" ||
+    values.valor === 0;
+
+  const Passo3Desativado =
+    values.vendedor === "" ||
+    values.emailVendedor === "" ||
+    values.telefoneVendedor === "" ||
+    values.departamentoVendedor === "";
+
+  const Passo4Desativado =
+    values.tomador === "" ||
+    values.emailTomador === "" ||
+    values.telefoneTomador === "" ||
+    values.departamentoTomador === "";
 
   return (
     <SafeAreaView className="w-full h-full flex-1 items-center justify-center">
+      {isLoading ? (
+        <SafeAreaView className="flex z-50 absolute w-full h-full flex-1 items-center justify-center bg-[#0000005b]">
+          <View className="p-4 bg-white rounded-md">
+            <ActivityIndicator size="large" color={"#38457a"} />
+          </View>
+        </SafeAreaView>
+      ) : (
+        ""
+      )}
       <View className="w-[90%] flex-1 items-center">
         <Text className="text-3xl text-[#38457a] font-semibold">
           Gerar nova proposta
@@ -156,9 +266,7 @@ export default function Index() {
               borderRadius: 5,
             }}
             nextBtnTextStyle={{ color: "#ffffff" }}
-            nextBtnDisabled={Object.values(values)
-              .slice(0, 4)
-              .some((value) => value === "")}
+            nextBtnDisabled={Passo1Desativado}
           >
             <View>
               {InputsPropostas({ values, onChange, setValues })
@@ -199,6 +307,7 @@ export default function Index() {
               borderRadius: 5,
             }}
             previousBtnTextStyle={{ color: "#ffffff" }}
+            nextBtnDisabled={Passo2Desativado}
           >
             <View>
               {InputsPropostas({
@@ -236,6 +345,7 @@ export default function Index() {
               borderRadius: 5,
             }}
             previousBtnTextStyle={{ color: "#ffffff" }}
+            nextBtnDisabled={Passo3Desativado}
           >
             <View>
               {InputsPropostas({ values, onChange, setValues })
@@ -261,6 +371,7 @@ export default function Index() {
             }}
             previousBtnTextStyle={{ color: "#ffffff" }}
             finishBtnText="Finalizar"
+            nextBtnDisabled={Passo4Desativado}
           >
             <View>
               {InputsPropostas({ values, onChange, setValues })
@@ -298,13 +409,22 @@ export default function Index() {
             <Text className="text-3xl font-semibold text-[#38457a] text-center">
               Proposta gerada!
             </Text>
+            <Text className="text-xl font-normal text-[#38457a] text-center">
+              A proposta {values.proposta} foi gerada e está salva na nuvem!
+            </Text>
             <View className="flex items-center justify-center gap-x-4 flex-row">
-              <TouchableOpacity className="border-2 border-[#38457a] w-[40%] p-4 rounded-md flex items-center justify-center">
+              <TouchableOpacity
+                onPress={() => router.push("/")}
+                className="bg-white border border-[#38457a]  w-[40%] p-4 text-[#38457a] rounded-md flex items-center justify-center"
+              >
                 <Text className="text-[#38457a] text-lg font-semibold">
-                  Visualizar
+                  Voltar
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity className="bg-[#38457a]  w-[40%] p-4 rounded-md flex items-center justify-center">
+              <TouchableOpacity
+                onPress={() => Linking.openURL(linkPdf)}
+                className="bg-[#38457a]  w-[40%] p-4 rounded-md flex items-center justify-center"
+              >
                 <Text className="text-white text-lg font-semibold">Baixar</Text>
               </TouchableOpacity>
             </View>
