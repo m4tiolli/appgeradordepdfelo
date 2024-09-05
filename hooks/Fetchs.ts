@@ -23,3 +23,20 @@ export const fetchPropostas = async ({ setPropostas }: any) => {
     .then((response) => setPropostas(response.data))
     .catch(err => console.error(err))
 }
+
+export const fetchUsuarios = async ({setUsuarios}: any) => {
+  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/buscar-usuarios")
+    .then((response) => setUsuarios(response.data))
+    .catch(err => console.error(err))
+}
+
+export const fetchDepartamentos = async (): Promise<any[]> => {
+  return await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/departamentos")
+    .then((response) => {
+      return response.data
+    })
+    .catch(err => {
+      console.error(err)
+      return []
+    })
+}

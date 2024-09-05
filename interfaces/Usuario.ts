@@ -6,5 +6,5 @@ export interface IUsuario {
   telefone2: string,
   email: string,
   senha: string,
-  administrador: boolean
+  administrador: boolean | number
 }
