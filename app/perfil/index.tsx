@@ -31,8 +31,17 @@ export default function AtualizarDados() {
     departamento: { value: "", placeholder: "Departamento" },
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState([false, false]);
   const [deptos, setDeptos] = useState<any>();
+  const [token, setToken] = useState("")
+
+  useEffect(() => {
+    const pegarToken = async () => {
+      const t = await getToken()
+      setToken(t as string)
+    }
+    pegarToken()
+  })
 
   useEffect(() => {
     const preencher = async () => {
@@ -40,7 +49,7 @@ export default function AtualizarDados() {
       setDeptos(
         departamentos.map((d: any) => ({ label: d.nome, value: d.nome }))
       );
-      setIsMounted(true);
+      setIsMounted([true, false]);
     };
     preencher();
   }, []);
@@ -48,22 +57,26 @@ export default function AtualizarDados() {
   useEffect(() => {
     const pegarDados = async () => {
       const token = await getToken();
-      axios
-        .get(process.env.EXPO_PUBLIC_URL_API + "api/perfil", {
+      try {
+        const res = await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/perfil", {
           headers: { Authorization: token as unknown as string },
-        })
-        .then((res) => {
-          setValues({
-            nome: { value: res.data.nome, placeholder: "Nome" },
-            email: { value: res.data.email, placeholder: "E-mail" },
-            telefone1: { value: res.data.telefone1, placeholder: "Telefone 1" },
-            telefone2: { value: res.data.telefone2, placeholder: "Telefone 2" },
-            departamento: {
-              value: res.data.departamento,
-              placeholder: "Departamento",
-            },
-          });
         });
+        const userData = res.data;
+        console.log(userData);
+        setValues({
+          nome: { value: userData.nome, placeholder: "Nome" },
+          email: { value: userData.email, placeholder: "E-mail" },
+          telefone1: { value: userData.telefone1, placeholder: "Telefone 1" },
+          telefone2: { value: userData.telefone2, placeholder: "Telefone 2" },
+          departamento: {
+            value: userData.departamento,
+            placeholder: "Departamento",
+          },
+        });
+        setIsMounted([true, true]);
+      } catch (error) {
+        console.error(error);
+      }
     };
     pegarDados();
   }, []);
@@ -75,7 +88,7 @@ export default function AtualizarDados() {
     }));
   };
 
-  if (!isMounted) {
+  if (isMounted.includes(false)) {
     return (
       <View className="w-full h-full bg-white flex items-center justify-center">
         <ActivityIndicator color="#38457a" size="large" />
@@ -100,10 +113,7 @@ export default function AtualizarDados() {
       departamento: values.departamento.value,
     };
     axios
-      .post(process.env.EXPO_PUBLIC_URL_API + "api/perfil", {
-        headers: { Authorization: token as unknown as string },
-        body,
-      })
+      .put(process.env.EXPO_PUBLIC_URL_API + "api/perfil", body, { headers: { Authorization: token } })
       .then(() => setIsLoading(false))
       .then(() =>
         Toast.show({
@@ -118,6 +128,7 @@ export default function AtualizarDados() {
         }, 5000)
       )
       .catch((error) => {
+        console.error(error)
         setIsLoading(false);
         Toast.show({
           type: "error",
@@ -130,7 +141,7 @@ export default function AtualizarDados() {
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
       <Text className="text-3xl font-semibold text-[#38457a]">
-        Cadastrar usuário
+        Editar dados
       </Text>
       {Object.keys(values).map((key, index) => {
         if (
@@ -146,6 +157,7 @@ export default function AtualizarDados() {
               onChangeText={(text) => onChange(key, text)}
               placeholder={values[key].placeholder}
               placeholderTextColor={"#ffffffd4"}
+              value={values[key].value as string}
             />
           );
         } else if (key === "telefone1" || key === "telefone2") {
@@ -208,6 +220,7 @@ export default function AtualizarDados() {
                     },
                   }))
                 }
+                value={values[key].value as string}
                 items={deptos}
                 useNativeAndroidPickerStyle={false}
               />
@@ -218,9 +231,8 @@ export default function AtualizarDados() {
       })}
 
       <TouchableOpacity
-        className={`bg-[#38457a] p-4 mt-4 rounded-md w-[80%] ${
-          disabled ? "opacity-60 " : ""
-        }`}
+        className={`bg-[#38457a] p-4 mt-4 rounded-md w-[80%] flex items-center justify-center ${disabled ? "opacity-60 " : ""
+          }`}
         onPress={Atualizar}
         disabled={disabled}
       >

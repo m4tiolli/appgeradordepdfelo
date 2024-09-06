@@ -80,15 +80,27 @@ export default function Index() {
             Gerador de proposta
           </Text>
           {buttons.map((button, index) => (
-            <TouchableOpacity
-              className="bg-[#38457a] rounded-md w-[70%] p-4 mt-4 flex items-center justify-center"
-              onPress={button.onPress}
-              key={index++}
-            >
-              <Text className="text-white text-2xl font-semibold">
-                {button.title}
-              </Text>
-            </TouchableOpacity>
+            usuario?.administrador === 1 ? (
+              <TouchableOpacity
+                className="bg-[#38457a] rounded-md w-[70%] p-4 mt-4 flex items-center justify-center"
+                onPress={button.onPress}
+                key={index++}
+              >
+                <Text className="text-white text-2xl font-semibold">
+                  {button.title}
+                </Text>
+              </TouchableOpacity>
+            ) : !button.sec ? (
+              <TouchableOpacity
+                className="bg-[#38457a] rounded-md w-[70%] p-4 mt-4 flex items-center justify-center"
+                onPress={button.onPress}
+                key={index++}
+              >
+                <Text className="text-white text-2xl font-semibold">
+                  {button.title}
+                </Text>
+              </TouchableOpacity>
+            ) : null
           ))}
           <Text className="mt-4 text-lg font-regular">
             Seu acesso expira em {expire.data} às {expire.hora}

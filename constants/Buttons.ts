@@ -13,10 +13,12 @@ export const buttons = [
   {
     title: "Cadastrar usuário",
     onPress: () => router.push("/cadastrar-usuario"),
+    sec: "admin"
   },
   {
     title: "Visualizar usuários",
     onPress: () => router.push("/visualizar-usuarios"),
+    sec: "admin"
   },
   {
     title: "Alterar dados do perfil",
