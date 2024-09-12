@@ -62,7 +62,6 @@ export default function AtualizarDados() {
           headers: { Authorization: token as unknown as string },
         });
         const userData = res.data;
-        console.log(userData);
         setValues({
           nome: { value: userData.nome, placeholder: "Nome" },
           email: { value: userData.email, placeholder: "E-mail" },
@@ -158,9 +157,10 @@ export default function AtualizarDados() {
               placeholder={values[key].placeholder}
               placeholderTextColor={"#ffffffd4"}
               value={values[key].value as string}
+              cursorColor={"#d84d4d"}
             />
           );
-        } else if (key === "telefone1" || key === "telefone2") {
+        } else if (key === "telefone1") {
           return (
             <MaskInput
               key={index++}
@@ -187,6 +187,36 @@ export default function AtualizarDados() {
                 /\d/,
               ]}
               keyboardType="numeric"
+              cursorColor={"#d84d4d"}
+            />
+          );
+        } else if (key === "telefone2") {
+          return (
+            <MaskInput
+              key={index++}
+              className="w-[80%] border border-[#38457a4d] bg-[#38457af8] text-white text-xl p-2 rounded-md mt-4"
+              placeholder={values[key].placeholder}
+              placeholderTextColor="#ffffffd4"
+              onChangeText={(masked, unmasked) => onChange(key, masked)}
+              value={values[key].value as string}
+              mask={[
+                "(",
+                /\d/,
+                /\d/,
+                ")",
+                " ",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+              ]}
+              keyboardType="numeric"
+              cursorColor={"#d84d4d"}
             />
           );
         } else if (key === "departamento") {
@@ -237,7 +267,7 @@ export default function AtualizarDados() {
         disabled={disabled}
       >
         <Text className="text-center text-white font-semibold text-2xl">
-          {isLoading ? <ActivityIndicator color="#fff" /> : "Cadastrar"}
+          {isLoading ? <ActivityIndicator color="#fff" /> : "Atualizar"}
         </Text>
       </TouchableOpacity>
       <Toast />

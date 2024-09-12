@@ -41,8 +41,6 @@ export default function UsuarioDetails() {
     );
   }
 
-  console.log(admin);
-
   const handleExcluir = async () => {
     setIsModalExcluirOpen(false);
     setIsLoading(true);

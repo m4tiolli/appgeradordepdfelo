@@ -34,12 +34,14 @@ export interface InputWithInfoProps {
   handleLogin?: () => void
   keyboardType?: string
   onEnd?: () => void
+  onBlur?: () => void
 }
 export interface CopyInputWithInfoProps {
   values: Values;
   setValues: React.Dispatch<React.SetStateAction<any>>;
   onChange: ({ name, text, setValues }: { name: string, text: string, setValues: React.Dispatch<React.SetStateAction<any>> }) => void
-  mesesFatorFinanceiro?: []
+  mesesFatorFinanceiro?: [],
+  BuscarCNPJ?: () => void
 }
 
 export interface Values {

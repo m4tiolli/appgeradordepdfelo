@@ -18,7 +18,6 @@ export default function PropostaDetails() {
     };
     getProposta();
   }, []);
-  console.log(proposta);
 
   if (!proposta) {
     return (

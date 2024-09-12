@@ -8,8 +8,29 @@ import {
 import React from "react";
 import { InputWithInfoProps } from "@/interfaces/Input";
 import MaskInput from "react-native-mask-input";
+import axios from "axios";
 
 export default function Input(props: Readonly<InputWithInfoProps>) {
+  const BuscarCNPJ = async () => {
+    try {
+      const response = await axios.get(
+        `https://api.cnpja.com/office/${props.values.cnpj}`,
+        {
+          headers: {
+            Authorization:
+              "ffaafa01-3f8a-43eb-b361-6033430f3f98-55be84d3-2df7-4987-b151-49d9a0b6b0a6",
+          },
+        }
+      );
+      props.setValues((prev: any) => ({
+        ...prev,
+        nomeEmpresa: response.data.alias,
+        razao: response.data.company.name,
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
   if (props.index != undefined && props.refs != undefined) {
     return (
       <View className="relative mt-4">
@@ -49,8 +70,9 @@ export default function Input(props: Readonly<InputWithInfoProps>) {
               /\d/,
             ]}
             placeholderTextColor={"#ffffffd4"}
-            cursorColor={"#38457a"}
+            cursorColor={"#d84d4d"}
             keyboardType="numeric"
+            onEndEditing={BuscarCNPJ}
           />
         ) : props.name == "valorContaEnergia" ? (
           <MaskInput
@@ -67,22 +89,8 @@ export default function Input(props: Readonly<InputWithInfoProps>) {
                 setValues: props.setValues,
               });
             }}
-            mask={[
-              "R",
-              "$",
-              " ",
-              /\d/,
-              /\d/,
-              /\d/,
-              /\d/,
-              /\d/,
-              /\d/,
-              ",",
-              /\d/,
-              /\d/,
-            ]}
             placeholderTextColor={"#ffffffd4"}
-            cursorColor={"#38457a"}
+            cursorColor={"#d84d4d"}
             keyboardType="numeric"
             onBlur={() => props.onEnd && props.onEnd()}
           />
@@ -111,7 +119,7 @@ export default function Input(props: Readonly<InputWithInfoProps>) {
               /\d/,
             ]}
             placeholderTextColor={"#ffffffd4"}
-            cursorColor={"#38457a"}
+            cursorColor={"#d84d4d"}
             keyboardType="numeric"
             onBlur={() => props.onEnd && props.onEnd()}
           />
@@ -129,7 +137,7 @@ export default function Input(props: Readonly<InputWithInfoProps>) {
             inputMode={props.type as InputModeOptions}
             placeholder={props.placeholder}
             placeholderTextColor={"#ffffffd4"}
-            cursorColor={"#38457a"}
+            cursorColor={"#d84d4d"}
             secureTextEntry={props.password}
             className="w-full border border-[#38457a4d] bg-[#38457af8] text-white text-xl p-2 rounded-md mt-4"
             onSubmitEditing={() => {

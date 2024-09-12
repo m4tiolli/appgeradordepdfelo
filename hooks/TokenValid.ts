@@ -8,7 +8,6 @@ export const getToken = async () => {
 
 export const isTokenValid = async () => {
   const token = await getToken()
-  console.log(token)
   if (!token || token == null || token == undefined) return false
   const key = 'secret_key'
   const decoded = JWT.decode(token, key)

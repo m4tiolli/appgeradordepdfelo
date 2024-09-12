@@ -22,15 +22,6 @@ export const InputsPropostas= ({values, setValues, onChange, mesesFatorFinanceir
     keyboardType: "numeric"
   },
   {
-    name: "nomeEmpresa",
-    value: values.nomeEmpresa,
-    onChange: onChange,
-    placeholder: "Nome da Empresa",
-    type: "text",
-    setValues: setValues,
-    values: values
-  },
-  {
     name: "razao",
     value: values.razao,
     onChange: onChange,
@@ -38,6 +29,15 @@ export const InputsPropostas= ({values, setValues, onChange, mesesFatorFinanceir
     type: "text",
     setValues: setValues,
     values: values
+  },
+  {
+    name: "nomeEmpresa",
+    value: values.nomeEmpresa,
+    onChange: onChange,
+    placeholder: "Nome da Empresa",
+    type: "text",
+    setValues: setValues,
+    values: values,
   },
   {
     name: "potencia",

@@ -19,6 +19,7 @@ import { Select } from "@/components/Select";
 import { getToken } from "@/hooks/TokenValid";
 import { Values } from "@/interfaces/Input";
 import { router } from "expo-router";
+import { RadioButton } from "react-native-paper";
 
 export default function Index() {
   const [values, setValues] = useState<Values>({
@@ -50,6 +51,11 @@ export default function Index() {
   const [linkPdf, setLinkPdf] = useState("");
   const [departamentos, setDepartamentos] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [elo, setElo] = useState("S");
+  const [propostas, setPropostas] = useState({
+    propostaRecuperadora: "",
+    propostaServicos: "",
+  });
 
   const token = getToken();
 
@@ -110,13 +116,19 @@ export default function Index() {
   useEffect(() => {
     axios
       .get(process.env.EXPO_PUBLIC_URL_API + "api/proxima-proposta")
-      .then((response) =>
-        setValues((prev) => ({ ...prev, proposta: response.data.proposta }))
-      );
+      .then((response) => setPropostas(response.data.proposta));
     buscarDadosUsuario();
     buscarDepartamentos();
     buscarFatores();
   }, []);
+
+  useEffect(() => {
+    const qual =
+      elo === "S" ? propostas.propostaServicos : propostas.propostaRecuperadora;
+    if (values.proposta !== qual) {
+      setValues((prev) => ({ ...prev, proposta: qual }));
+    }
+  }, [elo, propostas, values.proposta]);
 
   const refs = [
     useRef(null),
@@ -190,6 +202,7 @@ export default function Index() {
       meses: values.fatorFinanceiroMes,
       valorContaEnergia: values.valorContaEnergia,
       fatorFinanceiroId: idFator.id,
+      elo: elo
     };
 
     await axios
@@ -269,6 +282,27 @@ export default function Index() {
             nextBtnDisabled={Passo1Desativado}
           >
             <View>
+              <View className="flex flex-row items-center justify-start">
+                <Text className="font-semibold text-[#38457a]">Qual Elo:</Text>
+                <RadioButton
+                  value="Serviços"
+                  status={elo === "S" ? "checked" : "unchecked"}
+                  onPress={() => setElo("S")}
+                  color="#38457a"
+                />
+                <Text className="font-medium text-[#38457a] -ml-1">
+                  Serviços
+                </Text>
+                <RadioButton
+                  value="Recuperadora"
+                  status={elo === "R" ? "checked" : "unchecked"}
+                  onPress={() => setElo("R")}
+                  color="#38457a"
+                />
+                <Text className="font-medium text-[#38457a] -ml-1">
+                  Recuperadora
+                </Text>
+              </View>
               {InputsPropostas({ values, onChange, setValues })
                 .slice(0, 1)
                 .map((props, index) => (

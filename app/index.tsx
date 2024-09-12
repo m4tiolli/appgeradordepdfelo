@@ -17,7 +17,6 @@ export default function Index() {
     async function checkToken() {
       try {
         if ((await isTokenValid()) !== true) {
-          console.log("Token expired");
           Toast.show({
             type: "error",
             text1: "Sessão expirada.",
@@ -58,7 +57,6 @@ export default function Index() {
         }, 2000);
       } else {
         setIsMounted(true);
-        console.log("Token does not contain an expiration date");
       }
     };
     checkToken();
