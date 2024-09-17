@@ -115,7 +115,7 @@ export default function Index() {
 
   useEffect(() => {
     axios
-      .get(process.env.EXPO_PUBLIC_URL_API + "api/proxima-proposta")
+      .get(process.env.EXPO_PUBLIC_URL_API + "api/ef/proxima-proposta")
       .then((response) => setPropostas(response.data.proposta));
     buscarDadosUsuario();
     buscarDepartamentos();
