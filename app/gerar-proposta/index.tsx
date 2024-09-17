@@ -99,7 +99,7 @@ export default function Index() {
   const buscarFatores = async () => {
     try {
       const response = await axios.get(
-        process.env.EXPO_PUBLIC_URL_API + "api/fatores-financeiros"
+        process.env.EXPO_PUBLIC_URL_API + "api/ef/fatores-financeiros"
       );
       setFatores(response.data);
       setOptions(
@@ -206,7 +206,7 @@ export default function Index() {
     };
 
     await axios
-      .post(process.env.EXPO_PUBLIC_URL_API + "api/gerar-pdf", dataToSend, {
+      .post(process.env.EXPO_PUBLIC_URL_API + "api/ef/gerar-pdf", dataToSend, {
         headers: { Authorization: await token },
       })
       .then((response) => setLinkPdf(response.data.downloadLink))

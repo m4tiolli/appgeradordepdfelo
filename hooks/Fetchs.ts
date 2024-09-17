@@ -13,13 +13,13 @@ export const fetchUserById = async ({ setUser }: any) => {
 }
 
 export const fetchFatoresFinanceiros = async ({ setFatores }: any) => {
-  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/fatores-financeiros")
+  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/ef/fatores-financeiros")
     .then((response) => setFatores(response.data))
     .catch(err => console.error(err))
 }
 
 export const fetchPropostas = async ({ setPropostas }: any) => {
-  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/buscar-proposta")
+  await axios.get(process.env.EXPO_PUBLIC_URL_API + "api/ef/buscar-proposta")
     .then((response) => setPropostas(response.data))
     .catch(err => console.error(err))
 }
